@@ -2,17 +2,17 @@ const axiosLibrary = require("axios");
 const { count, log } = require("console");
 const https = require("https");
 
-const wooUser = "ck_03295fe6054727f57ec6ff296a242c02812c1eff";
-const wooPass = "cs_6d3cb36beca2768f4fdba84a5e52c821aab9b948";
+const wooUser = "";
+const wooPass = "";
 const wooLink = `https://accepteddeviation.local/wp-json/wc/v3/orders?consumer_key=${wooUser}&consumer_secret=${wooPass}`;
 
 const zohoRefreshToken =
-  "1000.a8b28439ef621d8f170c5ec34b9fc970.5061fb96f9d4e9daedc1c7fdd92279fc";
-const zohoClientId = "1000.3BGQJS0TWS5596WC76WS41UG2UBZCA";
-const zohoClientSecret = "83a335bbcde7a7ab3596b576ba66d80a25f99d1c55";
+  "";
+const zohoClientId = "";
+const zohoClientSecret = "";
 
 let zohoAccessToken =
-  "1000.2b08cbf18900c0a70107fdbea00ae65c.4bdb4a5cd66d612cef7e58734bd6e79e";
+  "";
 
 const axios = axiosLibrary.create({
   httpsAgent: new https.Agent({ rejectUnauthorized: false }),
