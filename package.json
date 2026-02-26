@@ -1,0 +1,16 @@
+{
+  "name": "zoho",
+  "version": "1.0.0",
+  "description": "",
+  "main": "zohoController.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node zohoController.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.5",
+    "dotenv": "^17.3.1"
+  }
+}
