@@ -1,0 +1,78 @@
+string standalone.getOrders()
+{
+// 1. Refresh Zoho Access Token
+tokenResp = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token?refresh_token=1000.a8b28439ef621d8f170c5ec34b9fc970.5061fb96f9d4e9daedc1c7fdd92279fc&client_id=1000.3BGQJS0TWS5596WC76WS41UG2UBZCA&client_secret=83a335bbcde7a7ab3596b576ba66d80a25f99d1c55&grant_type=refresh_token"
+	type :POST
+];
+accessToken = tokenResp.get("access_token");
+info "Access Token: " + accessToken;
+// 2. Fetch orders
+response = invokeurl
+[
+// api from my personal pc serves the collection of the orders made in the wooComerce locally
+	url :"https://5f07-197-36-27-95.ngrok-free.app/orders"
+	type :GET
+];
+ordersList = response.toJSONList();
+info "Orders: " + ordersList;
+// 3. Loop through each order
+for each  order in ordersList
+{
+	customer = order.get("billing");
+	// 4. Build Contact body
+	contactData = Map();
+	contactData.put("First_Name",customer.get("first_name"));
+	contactData.put("Last_Name",customer.get("last_name"));
+	contactData.put("Email",customer.get("email"));
+	contactData.put("Phone",customer.get("phone"));
+	dataList = list();
+	dataList.add(contactData);
+	duplicateFields = list();
+	duplicateFields.add("Email");
+	contactBody = Map();
+	contactBody.put("data",dataList);
+	contactBody.put("duplicate_check_fields",duplicateFields);
+	// 5. Upsert Contact
+	contactHeaders = Map();
+	contactHeaders.put("Authorization","Zoho-oauthtoken " + accessToken);
+	contactHeaders.put("Content-Type","application/json");
+	contactResp = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2/Contacts/upsert"
+		type :POST
+		parameters:contactBody.toString()
+		headers:contactHeaders
+	];
+	info "Contact Response: " + contactResp;
+	contactId = contactResp.get("data").get(0).get("details").get("id");
+	info "Contact ID: " + contactId;
+	// 6. Build Deal body
+	contactNameMap = Map();
+	contactNameMap.put("id",contactId);
+	dealData = Map();
+	dealData.put("Deal_Name","Order #" + order.get("id").toString() + " - " + customer.get("first_name") + " " + customer.get("last_name"));
+	dealData.put("Stage","waiting for shipping");
+	dealData.put("Amount",order.get("total"));
+	dealData.put("Closing_Date",order.get("date_created").toList("T").get(0));
+	dealData.put("Contact_Name",contactNameMap);
+	dealList = list();
+	dealList.add(dealData);
+	dealBody = Map();
+	dealBody.put("data",dealList);
+	// 7. Create Deal
+	dealHeaders = Map();
+	dealHeaders.put("Authorization","Zoho-oauthtoken " + accessToken);
+	dealHeaders.put("Content-Type","application/json");
+	dealResp = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2/Deals"
+		type :POST
+		parameters:dealBody.toString()
+		headers:dealHeaders
+	];
+	info "Deal Response: " + dealResp;
+}
+return "";
+}

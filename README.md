@@ -46,16 +46,21 @@ npm install
 
 ## Environment Variables
 
-Create a `.env` file in the root:
+change the values of 
 
 ```env
-WOO_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxx
-WOO_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxx
-WOO_STORE_URL=https://your-store.com
+const wooUser = "ck_xxx";
+const wooPass = "cs_xxx";
+const wooLink = `https://accepteddeviation.local/wp-json/wc/v3/orders?consumer_key=${wooUser}&consumer_secret=${wooPass}`;
 
-ZOHO_CLIENT_ID=1000.xxxxxxxxxxxxxxxx
-ZOHO_CLIENT_SECRET=xxxxxxxxxxxxxxxx
-ZOHO_REFRESH_TOKEN=1000.xxxxxxxxxxxxxxxx
+const zohoRefreshToken =
+  "xxx.xx";
+const zohoClientId = "xx.xx";
+const zohoClientSecret = "xxx";
+
+let zohoAccessToken =
+  "xxx.xxxx";
+
 ```
 
 ---
@@ -94,33 +99,8 @@ A Deluge function (`getOrders`) is scheduled inside Zoho CRM to:
 2. Fetch orders from the ngrok `/orders` endpoint
 3. Upsert a **Contact** (using Email as duplicate check field)
 4. Create a **Deal** linked to the Contact
+5. copy this file in getOrders_Zoho.txt into your scheduled function
 
-### Schedule
-
-The function runs on a schedule configured in:
-`Zoho CRM → Setup → Automation → Schedules`
-
-Minimum frequency: **every 1 hour**
-
----
-
-## WooCommerce API Setup
-
-1. Go to **WooCommerce → Settings → Advanced → REST API**
-2. Click **Add Key**
-3. Set permissions to **Read**
-4. Copy the `Consumer Key` and `Consumer Secret` into your `.env`
-
----
-
-## Zoho OAuth Setup
-
-1. Go to [Zoho API Console](https://api-console.zoho.com)
-2. Create a **Self Client**
-3. Generate a refresh token with scopes:
-   - `ZohoCRM.modules.contacts.ALL`
-   - `ZohoCRM.modules.deals.ALL`
-4. Copy credentials into your `.env`
 
 ---
 
@@ -129,3 +109,13 @@ Minimum frequency: **every 1 hour**
 - ngrok free tier generates a **new URL every restart** — update the Deluge function URL each time
 - The `zohoController.js` uses an in-memory `Set` to avoid duplicate Deal creation within the same session
 - The Deluge function does not currently track processed orders between runs — consider adding a Zoho CRM custom field or variable to handle this if duplicates become an issue
+
+
+
+---
+# all the functionalities made in node
+ you can just run teh zohoController.js and just run the woocomerce 
+ it contains
+ - gets the orders from a key made in woocommerce
+ - refresh the access tocken with the refresh token recieved from zoho console
+ - calls zoho apis to save contacts the to save deals

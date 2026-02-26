@@ -6,8 +6,8 @@ const app = express();
 const PORT = 3000;
 
 // Woo credentials
-const wooUser = "ck_03295fe6054727f57ec6ff296a242c02812c1eff";
-const wooPass = "cs_6d3cb36beca2768f4fdba84a5e52c821aab9b948";
+const wooUser = " ";
+const wooPass = " ";
 
 const wooLink = `https://accepteddeviation.local/wp-json/wc/v3/orders?consumer_key=${wooUser}&consumer_secret=${wooPass}`;
 
